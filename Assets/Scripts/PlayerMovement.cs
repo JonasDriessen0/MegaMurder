@@ -21,6 +21,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing;
     private Vector3 dashDirection;
 
+    [Header("Dash to object properties")]
+    [SerializeField] private float objDashTime;
+    [SerializeField] private float objDashSpeed;
 
     [Header("Ground properties")]
     public Transform groundCheck;
@@ -33,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
     public Slider dashBar;
     public CharacterController controller;
     public Camera cam;
+    public TargetObject tObj;
 
     private void Start()
     {
@@ -62,10 +66,17 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!isDashing && dashCooldown >= 1f)
             {
-
                 isDashing = true;
                 StartCoroutine(DashCoroutine());
+            }
+        }
 
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (!isDashing && dashCooldown >= 1f && tObj.hasTarget == true)
+            {
+                isDashing = true;
+                StartCoroutine(DashToTarget(tObj.targetedObject));
             }
         }
 
@@ -141,6 +152,35 @@ public class PlayerMovement : MonoBehaviour
         }
 
         velocity = dashDirection * (dashSpeed - 1.5f);
+
+        isDashing = false;
+    }
+
+    private IEnumerator DashToTarget(GameObject targetObject)
+    {
+        // Calculate direction towards the target object
+        Vector3 directionToTarget = (targetObject.transform.position - transform.position).normalized;
+
+        // Calculate the distance to the target object
+        float distanceToTarget = Vector3.Distance(transform.position, targetObject.transform.position);
+
+        // Adjust dash speed based on the distance to the target
+        float adjustedDashSpeed = Mathf.Clamp(objDashSpeed, 0f, distanceToTarget / objDashTime);
+
+        // Update dash cooldown
+        dashCooldown -= 0.1f;
+
+        // Perform the dash
+        float startTime = Time.time;
+        while (Time.time < startTime + distanceToTarget / adjustedDashSpeed)
+        {
+            controller.Move(directionToTarget * adjustedDashSpeed * Time.deltaTime);
+            velocity.y = 0;
+            yield return null;
+        }
+
+        // Adjust velocity after the dash
+        velocity = directionToTarget * (adjustedDashSpeed - 37f);
 
         isDashing = false;
     }

@@ -6,7 +6,8 @@ public class TargetObject : MonoBehaviour
 {
     [SerializeField] private float maxTargetRange = 20f;
     [SerializeField] private Camera fpsCam;
-    private Transform targetedObject;
+    public GameObject targetedObject;
+    public bool hasTarget = false;
     [SerializeField] private GameObject targetIndicatorPrefab;
     private GameObject currentTargetIndicator;
 
@@ -19,24 +20,29 @@ public class TargetObject : MonoBehaviour
 
         if (Physics.SphereCast(origin, thickness, direction, out hit, maxTargetRange))
         {
+            targetedObject = hit.collider.gameObject;
             if (hit.collider.CompareTag("DashOrb"))
             {
+                hasTarget = true;
                 Debug.Log("Dash orb in range");
                 SetTargetIndicator(hit.collider.transform.position);
             }
             else if (hit.collider.CompareTag("Enemy"))
             {
+                hasTarget = true;
                 Debug.Log("Enemy in range");
                 SetTargetIndicator(hit.collider.transform.position);
             }
             else
             {
+                hasTarget = false;
                 Debug.Log("There's nothing");
                 ClearTargetIndicator();
             }
         }
         else
         {
+            hasTarget = false;
             Debug.Log("There's nothing");
             ClearTargetIndicator();
         }

@@ -24,26 +24,22 @@ public class TargetObject : MonoBehaviour
             if (hit.collider.CompareTag("DashOrb"))
             {
                 hasTarget = true;
-                Debug.Log("Dash orb in range");
                 SetTargetIndicator(hit.collider.transform.position);
             }
-            else if (hit.collider.CompareTag("Enemy"))
-            {
-                hasTarget = true;
-                Debug.Log("Enemy in range");
-                SetTargetIndicator(hit.collider.transform.position);
-            }
+            //else if (hit.collider.CompareTag("Enemy"))
+            //{
+            //    hasTarget = true;
+            //    SetTargetIndicator(hit.collider.transform.position);
+            //}
             else
             {
                 hasTarget = false;
-                Debug.Log("There's nothing");
                 ClearTargetIndicator();
             }
         }
         else
         {
             hasTarget = false;
-            Debug.Log("There's nothing");
             ClearTargetIndicator();
         }
 

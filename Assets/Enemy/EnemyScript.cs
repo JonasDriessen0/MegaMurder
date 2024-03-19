@@ -75,6 +75,7 @@ public class EnemyScript : MonoBehaviour
         if (!eyeGlowPlayed)
         {
             animator.SetTrigger("DoEyeGlow");
+            
             eyeGlowPlayed = true;
         }
     }

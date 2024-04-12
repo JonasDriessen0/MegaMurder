@@ -5,12 +5,9 @@ using UnityEngine.AI;
 
 public class EnemyScript : MonoBehaviour
 {
-    public NavMeshAgent agent;
-
-    public Transform player;
-
+    private NavMeshAgent agent;
+    private Transform player;
     public Animator animator;
-
     public LayerMask Ground, whatIsPlayer;
 
     public Vector3 walkPoint;
@@ -21,6 +18,7 @@ public class EnemyScript : MonoBehaviour
 
     public float timeBetweenAttacks;
     bool alreadyAttacked;
+    private float initialSpeed;
 
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
@@ -29,6 +27,7 @@ public class EnemyScript : MonoBehaviour
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        initialSpeed = agent.speed;
     }
 
     private void Update()
@@ -82,14 +81,13 @@ public class EnemyScript : MonoBehaviour
 
     private void AttackPlayer()
     {
-        agent.SetDestination(transform.position);
-
+        agent.speed = 0;
+        
         transform.LookAt(player);
 
         if (!alreadyAttacked)
         {
             animator.SetTrigger("DoAttack");
-
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
@@ -98,5 +96,6 @@ public class EnemyScript : MonoBehaviour
     private void ResetAttack()
     {
         alreadyAttacked = false;
+        agent.speed = initialSpeed;
     }
 }

@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
-        if (dashCooldown <= 3)
+        if (dashCooldown <= 3 && isGrounded)
         {
             StartCoroutine(DashCooldown());
         }
@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (!isDashing && dashCooldown >= 1f && tObj.hasTarget == true)
+            if (!isDashing && tObj.hasTarget)
             {
                 isDashing = true;
                 StartCoroutine(DashToTarget(tObj.targetedObject));
@@ -145,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
         float startTime = Time.time;
         while (Time.time < startTime + dashTime)
         {
-            controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+            controller.Move(dashDirection * (dashSpeed * Time.deltaTime));
             velocity.y = 0;
 
             yield return null;
@@ -167,14 +167,11 @@ public class PlayerMovement : MonoBehaviour
         // Adjust dash speed based on the distance to the target
         float adjustedDashSpeed = Mathf.Clamp(objDashSpeed, 0f, distanceToTarget / objDashTime);
 
-        // Update dash cooldown
-        dashCooldown -= 0.1f;
-
         // Perform the dash
         float startTime = Time.time;
         while (Time.time < startTime + distanceToTarget / adjustedDashSpeed)
         {
-            controller.Move(directionToTarget * adjustedDashSpeed * Time.deltaTime);
+            controller.Move(directionToTarget * (adjustedDashSpeed * Time.deltaTime));
             velocity.y = 0;
             yield return null;
         }

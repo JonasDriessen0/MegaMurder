@@ -26,11 +26,6 @@ public class TargetObject : MonoBehaviour
                 hasTarget = true;
                 SetTargetIndicator(hit.collider.transform.position);
             }
-            //else if (hit.collider.CompareTag("Enemy"))
-            //{
-            //    hasTarget = true;
-            //    SetTargetIndicator(hit.collider.transform.position);
-            //}
             else
             {
                 hasTarget = false;
@@ -48,7 +43,7 @@ public class TargetObject : MonoBehaviour
 
     void SetTargetIndicator(Vector3 position)
     {
-        if (currentTargetIndicator == null)
+        if (!currentTargetIndicator)
         {
             currentTargetIndicator = Instantiate(targetIndicatorPrefab, position, Quaternion.identity);
         }
@@ -60,7 +55,7 @@ public class TargetObject : MonoBehaviour
 
     void ClearTargetIndicator()
     {
-        if (currentTargetIndicator != null)
+        if (currentTargetIndicator)
         {
             Destroy(currentTargetIndicator);
             currentTargetIndicator = null;

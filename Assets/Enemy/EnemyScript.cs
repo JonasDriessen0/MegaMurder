@@ -9,11 +9,7 @@ public class EnemyScript : MonoBehaviour
     private Transform player;
     public Animator animator;
     public LayerMask Ground, whatIsPlayer;
-
-    public Vector3 walkPoint;
-    bool walkPointSet;
-    public float walkPointRange;
-
+    
     private bool eyeGlowPlayed = false;
 
     public float timeBetweenAttacks;
@@ -35,41 +31,21 @@ public class EnemyScript : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (!playerInSightRange && !playerInAttackRange) Patrolling();
+        if (!playerInSightRange && !playerInAttackRange) Idle();
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         if (playerInAttackRange && playerInSightRange) AttackPlayer();
 
         animator.SetBool("DoRun", (agent.velocity.magnitude > 0 && alreadyAttacked == false));
     }
 
-    private void Patrolling()
+    private void Idle()
     {
-        if (!walkPointSet) SearchWalkPoint();
-
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
-
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-
-        eyeGlowPlayed = false;
-
-        if (distanceToWalkPoint.magnitude < 1f)
-            walkPointSet = false;
-    }
-
-    private void SearchWalkPoint()
-    {
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, Ground))
-            walkPointSet = true;
+        agent.isStopped = true;
     }
 
     private void ChasePlayer()
     {
+        agent.isStopped = false;
         agent.SetDestination(player.position);
         if (!eyeGlowPlayed)
         {
